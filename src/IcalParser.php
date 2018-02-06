@@ -132,12 +132,14 @@ class IcalParser {
 	 * @throws \Exception
 	 */
 	public function parseFile($file, $callback = null) {
-		if (!$handle = fopen($file, 'r')) {
-			throw new \RuntimeException('Can\'t open file' . $file . ' for reading');
-		}
-		fclose($handle);
+		$ctx = stream_context_create(array(
+			'http' => array(
+				'method' => 'GET',
+				'header' => 'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; Touch; rv:11.0) like Gecko')
+			)
+		);
 
-		return $this->parseString(file_get_contents($file), $callback);
+		return $this->parseString(file_get_contents($file, false, $ctx), $callback);
 	}
 
 	/**
